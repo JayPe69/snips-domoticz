@@ -10,7 +10,7 @@ import io
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
-class SnipsConfigParser(configparser.SafeConfigParser):
+class SnipsConfigParser(configparser.SafeConfigParser):    
     def to_dict(self):
         return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
 
@@ -26,16 +26,17 @@ def read_configuration_file(configuration_file):
 
 def subscribe_intent_callback(hermes, intentMessage):
     conf = read_configuration_file(CONFIG_INI)
+    print(conf)
     action_wrapper(hermes, intentMessage, conf)
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    {{#each action_code as |a|}}{{a}}
-    {{/each}}
+    hermes.publish_continue_session(intentMessage.session_id, "OK",["JayPe69:Devices_Management"])
+    hermes.publish_end_session(intentMessage.session_id, "Terminé !")
 
 
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
+        h.subscribe_intent("JayPe69:Devices_Management", subscribe_intent_callback)\
          .start()
